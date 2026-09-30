@@ -27,16 +27,29 @@ pipeline {
             }
         }
 
-        stage('Push the artifacts'){
-           steps{
-                script{
-                    sh '''
-                    echo 'Push to Repo'
-                    docker push bharathdr7/cicd-e2e:${BUILD_NUMBER}
-                    '''
-                }
+        stage('Push the artifacts') {
+    steps {
+        script {
+            withCredentials([
+                usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )
+            ]) {
+                sh '''
+                echo "$DOCKER_PASSWORD" | docker login \
+                    -u "$DOCKER_USERNAME" \
+                    --password-stdin
+
+                docker push bharathdr7/cicd-e2e:${BUILD_NUMBER}
+
+                docker logout
+                '''
             }
         }
+    }
+}
         
         stage('Checkout K8S manifest SCM'){
             steps {
