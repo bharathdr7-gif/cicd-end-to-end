@@ -72,7 +72,7 @@ pipeline {
                         sh '''
                             cat deploy.yaml
 
-                            sed -i "s/32/${BUILD_NUMBER}/g" deploy.yaml
+                            sed -i "s|bharathdr7/cicd-e2e:[0-9]*|bharathdr7/cicd-e2e:${BUILD_NUMBER}|g" deploy.yaml
 
                             cat deploy.yaml
 
